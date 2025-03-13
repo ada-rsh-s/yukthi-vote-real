@@ -130,7 +130,7 @@ const App = () => {
         </button>
       </div>
 
-      <div className="leaderboard-section">
+      {/* <div className="leaderboard-section">
         <h2>Top 5 Projects</h2>
         {leaderboard.length > 0 ? (
           <ul>
@@ -145,7 +145,7 @@ const App = () => {
         ) : (
           <p>No votes yet.</p>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
