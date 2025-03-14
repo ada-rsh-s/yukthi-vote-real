@@ -27,7 +27,7 @@ const App = () => {
         setDeviceId(result.visitorId);
 
         const { data: voteData } = await supabase
-          .from("votes")
+          .from("votes_day2")
           .select("id")
           .eq("device_id", result.visitorId);
 
@@ -36,7 +36,9 @@ const App = () => {
         const { data: projectsData, error: projectsError } = await supabase
           .from("teams")
           .select("id, project_title")
-          .order("project_title");
+          .order("project_title")
+          .eq("track", "track3");
+        
 
         if (projectsError) throw projectsError;
         setProjects(projectsData || []);
@@ -52,7 +54,7 @@ const App = () => {
 
   const fetchLeaderboard = async () => {
     try {
-      const { data, error } = await supabase.rpc("get_leaderboard");
+      const { data, error } = await supabase.rpc("leaderboard_day2");
       if (error) throw error;
       setLeaderboard(data.map(item => ({
         project_id: item.project_id,
@@ -72,7 +74,7 @@ const App = () => {
     setVoteLoading(true);
     try {
       const { data: existingVote } = await supabase
-        .from("votes")
+        .from("votes_day2")
         .select("id")
         .eq("device_id", deviceId);
 
@@ -83,13 +85,15 @@ const App = () => {
         return;
       }
       const { error } = await supabase
-        .from("votes")
+        .from("votes_day2")
         .insert([{ project_id: selectedProject.value, device_id: deviceId }]);
       if (error) throw error;
       setVoted(true);
       alert("Vote submitted!");
       await fetchLeaderboard();
     } catch (error) {
+      console.log(error);
+      
       alert("Failed to submit vote.");
     } finally {
       setVoteLoading(false);
@@ -107,11 +111,7 @@ const App = () => {
 
   return (
     <div className="container">
-      <p>
-      <h1 className="title">YUKTHI: Concept to Creation - Project Expo</h1>
-      <h5>Use mobile data to vote</h5>
-      </p>
-      
+      <h1 className="title">YUKTHI: Project Expo - DAY 2</h1>
 
       <div className="vote-section">
         <h2>Vote for a Project</h2>
@@ -130,7 +130,7 @@ const App = () => {
         </button>
       </div>
 
-      {/* <div className="leaderboard-section">
+      <div className="leaderboard-section">
         <h2>Top 5 Projects</h2>
         {leaderboard.length > 0 ? (
           <ul>
@@ -145,7 +145,7 @@ const App = () => {
         ) : (
           <p>No votes yet.</p>
         )}
-      </div> */}
+      </div>
     </div>
   );
 };
